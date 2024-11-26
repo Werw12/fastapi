@@ -1,16 +1,17 @@
 from fastapi import FastAPI
+from backend.api.auth.userrouter import router as auth_router
+from backend.middleware.auth_middleware import auth_middleware
 
-def create_app() -> FastAPI:
-    app = FastAPI()
+app = FastAPI()
 
-    @app.get("/")
-    async def read_root():
-        return {"message": "Hello, World!"}
+app.include_router(auth_router, prefix="/auth")
 
-    return app
+app.middleware("http")(auth_middleware)
 
-app = create_app()
+@app.get("/protected")
+async def read_protected():
+    return {"message": "This is a protected route"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+@app.get("/hello")
+async def read_hello():
+    return {"message": "Hello, World!"}
