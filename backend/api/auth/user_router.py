@@ -20,8 +20,6 @@ def get_db():
     finally:
         db.close()
 
-
-
 @router.post("/register", response_model=schemas.User)
 async def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     try:
