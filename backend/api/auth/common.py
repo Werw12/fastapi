@@ -5,7 +5,7 @@ from backend.database.database import SessionLocal
 import os
 
 router = APIRouter()
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "../../templates"))
+templates = Jinja2Templates(directory="templates")
 
 def get_db():
     db = SessionLocal()

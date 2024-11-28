@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 from backend.core.config import MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, EMAIL_FROM, EMAIL_FROM_NAME
 
 # Set up the Jinja2 environment
-env = Environment(loader=FileSystemLoader('templates2'))
+env = Environment(loader=FileSystemLoader('templates'))
 
 async def send_email(to_email: str, subject: str, reset_link: str):
     # Load and render the HTML template

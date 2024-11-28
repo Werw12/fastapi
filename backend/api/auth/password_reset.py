@@ -10,21 +10,27 @@ from backend.core.config import SECRET_KEY, ALGORITHM
 from backend.api.auth.common import get_db, templates
 from backend.core.schemas.user import PasswordResetRequest
 from backend.api.auth.common import router
+import logging
 
 @router.post("/password-reset-request", operation_id="password_reset_request")
 async def password_reset_request(request: Request, password_reset_request: PasswordResetRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == password_reset_request.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        user = db.query(User).filter(User.email == password_reset_request.email).first()
+        if not user:
+            logging.warning(f"User with email {password_reset_request.email} not found")
+            return {"msg": "If the email is registered, a password reset link will be sent"}
 
-    token = create_password_reset_token(password_reset_request.email)
-    reset_link = f"http://localhost:8080/reset-password?token={token}"
+        token = create_password_reset_token(password_reset_request.email)
+        reset_link = f"http://localhost:8080/reset-password?token={token}"
 
-    # Render the HTML template with the reset link
-    html_content = templates.TemplateResponse("reset_password.html", {"request": request, "reset_link": reset_link})
-    await send_email(password_reset_request.email, "Password Reset Request", html_content.body.decode("utf-8"))
+        # Render the HTML template with the reset link
+        html_content = templates.TemplateResponse("reset_password.html", {"request": request, "reset_link": reset_link})
+        await send_email(password_reset_request.email, "Password Reset Request", html_content.body.decode("utf-8"))
 
-    return {"msg": "Password reset email sent"}
+        return {"msg": "If the email is registered, a password reset link will be sent"}
+    except Exception as e:
+        logging.error(f"Error in password reset request: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.get("/reset-password", response_class=HTMLResponse, operation_id="reset_password_form")
 async def reset_password_form(request: Request, token: str):
