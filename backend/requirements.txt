@@ -1,0 +1,6 @@
+fastapi
+sqlalchemy
+jose
+python-jose
+pytest
+httpx
