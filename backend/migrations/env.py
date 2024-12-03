@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from backend.database.database import Base
-from backend.core.models import user  # Import your models here
+from backend.core.models import user, scraped_data  # Import your models here
 
 target_metadata = Base.metadata
 
